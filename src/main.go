@@ -26,31 +26,6 @@ func main() {
 		return fiber.ErrUpgradeRequired
 	})
 
-	//app.Get("/ws/:id", websocket.New(func(c *websocket.Conn) {
-	//	//* DEBUG
-	//	log.Println(c.Locals("allowed"))
-	//	log.Println(c.Params("id"))
-	//	log.Println(c.Query("v"))
-	//	log.Println(c.Cookies("session"))
-	//
-	//	if _, e := connections[c]; e {
-	//		go func() {
-	//			log.Println("Attempted duplicate conn id")
-	//			if err := c.WriteMessage(websocket.TextMessage, []byte("ID already in use")); err != nil {
-	//				log.Println("write:", err)
-	//			}
-	//		}()
-	//	} else {
-	//		connections[c] = true
-	//	}
-	//
-	//	go func() {
-	//		if err := c.WriteMessage(websocket.TextMessage, []byte("Connection established with id: "+c.Params("id"))); err != nil {
-	//			delete(connections, c)
-	//		}
-	//	}()
-	//}))
-
 	app.Get("/ws/:id", websocket.New(func(c *websocket.Conn) {
 		log.Println(c.Locals("allowed"))  // true
 		log.Println(c.Params("id"))       // 123
