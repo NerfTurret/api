@@ -1,4 +1,4 @@
-package main
+package calls
 
 import (
 	"github.com/gofiber/contrib/websocket"

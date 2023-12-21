@@ -1,6 +1,7 @@
 package main
 
 import (
+    "github.com/NerfTurret/api/tree/main/src/calls"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"log"
