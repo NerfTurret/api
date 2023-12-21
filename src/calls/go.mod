@@ -1,6 +1,6 @@
-module api-gofiber
+module calls
 
-go 1.21
+go 1.21.5
 
 require (
 	github.com/gofiber/contrib/websocket v1.3.0
