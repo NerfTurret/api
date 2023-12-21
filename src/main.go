@@ -18,13 +18,7 @@ func main() {
 		AppName: appName,
 	})
 
-	app.Use("/ws", func(c *fiber.Ctx) error {
-		if websocket.IsWebSocketUpgrade(c) {
-			c.Locals("allowed", true)
-			return c.Next()
-		}
-		return fiber.ErrUpgradeRequired
-	})
+	app.Use("/ws", WsInit)
 
 	app.Get("/ws/:id", websocket.New(func(c *websocket.Conn) {
 		log.Println(c.Locals("allowed"))  // true
