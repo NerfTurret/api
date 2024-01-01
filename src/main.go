@@ -11,7 +11,7 @@ import (
     "errors"
 )
 
-const configPathDefault = "config.ini"
+const configPathDefault = "../config.ini"
 
 func main() {
     configPath, err := handleCommandLineArguments()
