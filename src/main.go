@@ -2,19 +2,34 @@ package main
 
 import (
     "calls"
+    "github.com/NerfTurret/ini-parser"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"log"
+    "os"
+    "fmt"
+    "errors"
 )
 
-const (
-	port    = ":3000"
-	appName = "DEV NerfTurret Cambreur College A005"
-)
+const configPathDefault = "config.ini"
 
 func main() {
+    configPath, err := handleCommandLineArguments()
+    if err != nil {
+        log.Fatal(err)
+        return
+    }
+    if configPath == "" {
+        configPath = configPathDefault
+    }
+
+    fmt.Println(configPath)
+
+    config := map[string]string{}
+    ini.ParseFromFile(configPath, config)
+
 	app := fiber.New(fiber.Config{
-		AppName: appName,
+		AppName: config["app.name"],
 	})
 
 	app.Use("/ws", calls.WsUpgrade)
@@ -23,5 +38,17 @@ func main() {
 
 	app.Get("/send/:data", calls.WsSendData)
 
-	log.Fatal(app.Listen(port))
+	log.Fatal(app.Listen(config["config.port"]))
+}
+
+// First ret val -> config.ini path
+func handleCommandLineArguments() (string, error) {
+    if !(len(os.Args) > 1) {
+        return "", nil
+    }
+    if os.Args[1] == "-h" || os.Args[1] == "--help" {
+        fmt.Printf("argv 1 -> filepath config.ini; default: \"./config.ini\"")
+        return "", errors.New("")
+    }
+    return os.Args[1], nil
 }

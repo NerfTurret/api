@@ -1,8 +1,9 @@
 module api-gofiber
 
-go 1.21
+go 1.21.5
 
 require (
+	github.com/NerfTurret/ini-parser v0.0.0-20240101184814-b652f3b356e9
 	github.com/gofiber/contrib/websocket v1.3.0
 	github.com/gofiber/fiber/v2 v2.51.0
 )
