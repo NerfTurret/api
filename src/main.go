@@ -23,7 +23,7 @@ func main() {
         configPath = configPathDefault
     }
 
-    fmt.Println(configPath)
+    fmt.Println("Current path to config file: ", configPath)
 
     config := map[string]string{}
     ini.ParseFromFile(configPath, config)
@@ -37,6 +37,8 @@ func main() {
 	app.Get("/ws/:id", websocket.New(calls.WsInit))
 
 	app.Get("/send/:data", calls.WsSendData)
+
+    app.Get("/select/:id", calls.SelectComputerById)
 
 	log.Fatal(app.Listen(config["config.port"]))
 }

@@ -43,12 +43,27 @@ func WsInit(c *websocket.Conn) {
 }
 
 func WsSendData(c *fiber.Ctx) error {
-    data := c.Params("data")
+    log.Println(c.Params("data"))
+    if err := wsSendData(c.Params("data")); err != nil {
+        log.Println(err)
+        return nil
+    }
+    return c.SendStatus(200)
+}
+
+func wsSendData(data string) error {
     for conn := range Connections {
         if err := conn.WriteMessage(websocket.TextMessage, []byte(data)); err != nil {
             log.Println("write:", err)
             delete(Connections, conn)
+            return err
         }
     }
-    return c.SendString("Data sent to all clients")
+    return nil
+}
+
+func SelectComputerById(c *fiber.Ctx) error {
+    log.Println("Received: " + c.Params("id"))
+    wsSendData(c.Params("id"))
+    return c.SendStatus(200)
 }
