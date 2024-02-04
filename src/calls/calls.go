@@ -4,6 +4,8 @@ import (
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
     "log"
+    "data"
+    "strconv"
 )
 
 var Connections = make(map[*websocket.Conn]bool)
@@ -64,6 +66,14 @@ func wsSendData(data string) error {
 
 func SelectComputerById(c *fiber.Ctx) error {
     log.Println("Received: " + c.Params("id"))
-    wsSendData(c.Params("id"))
+    id, err := strconv.Atoi(c.Params("id"))
+    if err != nil {
+        return c.SendStatus(fiber.ErrBadRequest.Code)
+    }
+    data, err := data.FetchPcData(id)
+    if err != nil {
+        return c.SendStatus(fiber.ErrBadRequest.Code)
+    }
+    wsSendData(data.ToString())
     return c.SendStatus(200)
 }

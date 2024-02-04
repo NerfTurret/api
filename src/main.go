@@ -2,6 +2,7 @@ package main
 
 import (
     "calls"
+    "data"
     "github.com/NerfTurret/ini-parser"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
@@ -14,6 +15,7 @@ import (
 const configPathDefault = "../config.ini"
 
 func main() {
+
     configPath, err := handleCommandLineArguments()
     if err != nil {
         log.Fatal(err)
@@ -27,6 +29,9 @@ func main() {
 
     config := map[string]string{}
     ini.ParseFromFile(configPath, config)
+
+    data.SetDataLocation(config["config.data"])
+    data.FetchPcData(1)
 
 	app := fiber.New(fiber.Config{
 		AppName: config["app.name"],
