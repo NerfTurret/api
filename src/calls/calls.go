@@ -3,12 +3,24 @@ package calls
 import (
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
-    "log"
     "data"
+    "fmt"
+    "log"
+    "math"
     "strconv"
 )
 
 var Connections = make(map[*websocket.Conn]bool)
+var Turret data.TurretPos
+var GlobalPcZ float64
+
+func SetTurretPos(t data.TurretPos) {
+    Turret = t
+}
+
+func SetGlobalPcZ(n float64) {
+    GlobalPcZ = n
+}
 
 func WsUpgrade(c *fiber.Ctx) error {
     if websocket.IsWebSocketUpgrade(c) {
@@ -20,10 +32,11 @@ func WsUpgrade(c *fiber.Ctx) error {
 
 
 func WsInit(c *websocket.Conn) {
-    log.Println(c.Locals("allowed"))
-    log.Println(c.Params("id"))
-    log.Println(c.Query("v"))
-    log.Println(c.Cookies("session")) 
+    // Debug info
+    //log.Println(c.Locals("allowed"))
+    //log.Println(c.Params("id"))
+    //log.Println(c.Query("v"))
+    //log.Println(c.Cookies("session")) 
 
     Connections[c] = true
 
@@ -36,7 +49,7 @@ func WsInit(c *websocket.Conn) {
     for {
         _, msg, err := c.ReadMessage()
         if err != nil {
-            log.Println("read:", err)
+            log.Println("readerr:", err)
             delete(Connections, c)
             break
         }
@@ -65,15 +78,17 @@ func wsSendData(data string) error {
 }
 
 func SelectComputerById(c *fiber.Ctx) error {
-    log.Println("Received: " + c.Params("id"))
     id, err := strconv.Atoi(c.Params("id"))
     if err != nil {
         return c.SendStatus(fiber.ErrBadRequest.Code)
     }
-    data, err := data.FetchPcData(id)
+    pos, err := data.FetchPcData(id)
     if err != nil {
         return c.SendStatus(fiber.ErrBadRequest.Code)
     }
-    wsSendData(data.ToString())
+    theta := math.Atan(math.Abs(pos.X - Turret.X)/math.Abs(pos.Y - Turret.Y))
+    phi := math.Atan(math.Abs(GlobalPcZ - Turret.Z)/math.Abs(pos.Y - Turret.Y))
+    wsSendData(fmt.Sprintf("%f;%f", theta, phi))
     return c.SendStatus(200)
 }
+

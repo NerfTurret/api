@@ -12,6 +12,12 @@ type Coordinate struct {
 	Y float64 `json:"y"`
 }
 
+type TurretPos struct {
+    X float64
+    Y float64
+    Z float64
+}
+
 func (c *Coordinate) ToString() string {
     return fmt.Sprintf("%f;%f", c.X, c.Y)
 }
@@ -35,10 +41,9 @@ func FetchPcData(pcId int) (c Coordinate, e error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Printf("%+v\n", coordinates)
     c = coordinates[pcId-1]
     e = nil
 
     return
 }
+

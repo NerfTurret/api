@@ -1,6 +1,7 @@
 package main
 
 import (
+    "github.com/gofiber/fiber/v2/middleware/cors"
     "calls"
     "data"
     "github.com/NerfTurret/ini-parser"
@@ -10,12 +11,15 @@ import (
     "os"
     "fmt"
     "errors"
+    "strconv"
 )
 
 const configPathDefault = "../config.ini"
+const noTurretPosErrorMsg = "Config file must define the turret's coordinates: x, y, and z"
+const incorrectTurretPosErrorMsg = "Invalid turret position defined in config file"
+var Turret data.TurretPos
 
 func main() {
-
     configPath, err := handleCommandLineArguments()
     if err != nil {
         log.Fatal(err)
@@ -30,18 +34,53 @@ func main() {
     config := map[string]string{}
     ini.ParseFromFile(configPath, config)
 
+    if v, ok := config["turret.x"]; ok == false {
+        log.Fatal(noTurretPosErrorMsg)
+    } else {
+        if Turret.X, err = strconv.ParseFloat(v, 64); err != nil {
+            log.Fatal(incorrectTurretPosErrorMsg)
+        }
+    }
+    if v, ok := config["turret.y"]; ok == false {
+        log.Fatal(noTurretPosErrorMsg)
+    } else {
+        if Turret.Y, err = strconv.ParseFloat(v, 64); err != nil {
+            log.Fatal(incorrectTurretPosErrorMsg)
+        }
+    }
+    if v, ok := config["turret.z"]; ok == false {
+        log.Fatal(noTurretPosErrorMsg)
+    } else {
+        if Turret.Z, err = strconv.ParseFloat(v, 64); err != nil {
+            log.Fatal(incorrectTurretPosErrorMsg)
+        }
+    }
+    calls.SetTurretPos(Turret)
+
+    if v, ok := config["global.pcZ"]; ok == false {
+        log.Fatal("Config file must define a global PC z coordinate")
+    } else {
+        if c, err := strconv.ParseFloat(v, 64); err != nil {
+            log.Fatal("Invalid global PC z coordinate")
+        } else {
+            calls.SetGlobalPcZ(c)
+        }
+    }
+
     data.SetDataLocation(config["config.data"])
     data.FetchPcData(1)
 
 	app := fiber.New(fiber.Config{
-		AppName: config["app.name"],
+    	AppName: config["app.name"],
 	})
+    app.Use(cors.New())
 
 	app.Use("/ws", calls.WsUpgrade)
-
 	app.Get("/ws/:id", websocket.New(calls.WsInit))
 
-	app.Get("/send/:data", calls.WsSendData)
+    if (config["config.openApi"] != "0") {
+        app.Get("/send/:data", calls.WsSendData)
+    }
 
     app.Get("/select/:id", calls.SelectComputerById)
 
