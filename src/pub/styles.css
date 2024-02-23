@@ -1,0 +1,36 @@
+.body {
+    margin: 0;
+    background-color: white;
+}
+
+.container {
+    width: 1880px;
+    height: 920px;
+
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+} 
+
+.border {
+    padding: 10px;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.no-border {
+    border: 1px solid white;
+}
+
+.okke {
+    border: 1px solid black;
+    grid-column: span 2;
+    text-align: center;
+}
