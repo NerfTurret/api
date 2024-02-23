@@ -84,6 +84,11 @@ func main() {
 
     app.Get("/select/:id", calls.SelectComputerById)
 
+    app.Static("/", "./public")
+    app.Get("/", func(c *fiber.Ctx) error {
+        return c.SendFile("./public/index.html")
+    })
+
 	log.Fatal(app.Listen(config["config.port"]))
 }
 
