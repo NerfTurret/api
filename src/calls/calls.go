@@ -86,8 +86,8 @@ func SelectComputerById(c *fiber.Ctx) error {
     if err != nil {
         return c.SendStatus(fiber.ErrBadRequest.Code)
     }
-    theta := math.Atan(math.Abs(pos.X - Turret.X)/math.Abs(pos.Y - Turret.Y))
-    phi := math.Atan(math.Abs(GlobalPcZ - Turret.Z)/math.Abs(pos.Y - Turret.Y))
+    theta := math.Atan(math.Abs(Turret.X - pos.X)/math.Abs(pos.Y - Turret.Y))
+    phi := math.Atan(math.Abs(Turret.Z - GlobalPcZ)/math.Abs(pos.Y - Turret.Y))
     wsSendData(fmt.Sprintf("%f;%f", theta, phi))
     return c.SendStatus(200)
 }
