@@ -1,5 +1,5 @@
 function sendData(pcId) {
-    fetch(`http://127.0.0.1:3000/select/${pcId}`, {
+    fetch(`http://turret.okke.dev/select/${pcId}`, {
         method: 'GET',
       })
         .then(response => {
@@ -12,7 +12,7 @@ function sendData(pcId) {
         .then(data => {
           console.log(data.json());
         })
-        .catch(error => {
-          console.error('There was a problem with the fetch operation:', error.json());
+        .catch(_ => {
+            return
         });
 }

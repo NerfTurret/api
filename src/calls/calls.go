@@ -32,12 +32,6 @@ func WsUpgrade(c *fiber.Ctx) error {
 
 
 func WsInit(c *websocket.Conn) {
-    // Debug info
-    //log.Println(c.Locals("allowed"))
-    //log.Println(c.Params("id"))
-    //log.Println(c.Query("v"))
-    //log.Println(c.Cookies("session")) 
-
     Connections[c] = true
 
     if err := c.WriteMessage(websocket.TextMessage,
@@ -86,8 +80,8 @@ func SelectComputerById(c *fiber.Ctx) error {
     if err != nil {
         return c.SendStatus(fiber.ErrBadRequest.Code)
     }
-    theta := math.Atan(math.Abs(Turret.X - pos.X)/math.Abs(pos.Y - Turret.Y))
-    phi := math.Atan(math.Abs(Turret.Z - GlobalPcZ)/math.Abs(pos.Y - Turret.Y))
+    theta := math.Atan((Turret.X - pos.X)/math.Abs(pos.Y - Turret.Y))
+    phi := math.Atan((Turret.Z - GlobalPcZ)/math.Abs(pos.Y - Turret.Y))
     wsSendData(fmt.Sprintf("%f;%f", theta, phi))
     return c.SendStatus(200)
 }
